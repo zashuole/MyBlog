@@ -5,4 +5,6 @@ import com.blog.result.Result;
 
 public interface BlogLoginService {
     Result login(User user);
+
+    Result logout();
 }
