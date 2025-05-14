@@ -9,7 +9,7 @@ import com.blog.properties.JwtProperties;
 import com.blog.result.Result;
 import com.blog.service.BlogLoginService;
 import com.blog.utils.BeanCopyUtils;
-import com.blog.utils.JwtUtil;
+import com.blog.utils.JwtUtils;
 import com.blog.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,8 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -42,7 +40,7 @@ public class BlogLoginServiceImpl implements BlogLoginService {
         //获取userid 生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
         String userId = loginUser.getUser().getId().toString();
-        String jwt = JwtUtil.createJWT(userId);
+        String jwt = JwtUtils.createJWT(userId);
         //把用户信息存入redis
         redisCache.setCacheObject("bloglogin:"+userId,loginUser);
 
