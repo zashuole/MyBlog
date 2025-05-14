@@ -10,4 +10,7 @@ public interface UserMapper {
 
     @Select("select * from sys_user where user_name = #{name}")
     User getUserbyName(String name);
+
+    @Select("select * from sys_user where id = #{userId}")
+    User getById(Long userId);
 }
