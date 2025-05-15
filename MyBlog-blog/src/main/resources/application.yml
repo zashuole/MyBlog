@@ -31,3 +31,9 @@ logging:
         mapper: debug
         service: info
         controller: info
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    accessKeyId: LTAI5tMMgy9xCofRSMUD3iDS
+    accessKeySecret: Fe3cMOgbj7IXVfiyleMXg5hzu6Lz6U
+    bucketName: web-tlias-tencent

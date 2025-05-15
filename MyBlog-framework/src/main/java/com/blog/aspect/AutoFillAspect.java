@@ -63,13 +63,23 @@ public class AutoFillAspect {
         }
         if (value == OperationType.UPDATE){
             //获得两个个公共字段的set方法
-            Method setUpdateTime = arg.getClass().getDeclaredMethod("setUpdateTime", LocalDateTime.class);
-            Method setUpdateUser = arg.getClass().getDeclaredMethod("setUpdateUser", Long.class);
+            Method setUpdateTime = arg.getClass().getDeclaredMethod("setUpdateTime", Date.class);
+            Method setUpdateUser = arg.getClass().getDeclaredMethod("setUpdateBy", Long.class);
             //设置权限
             setUpdateTime.setAccessible(true);
             setUpdateUser.setAccessible(true);
             //反射赋值
             setUpdateUser.invoke(arg,userId);
+            setUpdateTime.invoke(arg,now);
+        }
+        if(value == OperationType.REGISTER) {
+            //获得四个公共字段的set方法
+            Method setCreatTime = arg.getClass().getDeclaredMethod("setCreateTime", Date.class);
+            Method setUpdateTime = arg.getClass().getDeclaredMethod("setUpdateTime", Date.class);//设置权限
+            setCreatTime.setAccessible(true);
+            setUpdateTime.setAccessible(true);
+            //反射赋值
+            setCreatTime.invoke(arg,now);
             setUpdateTime.invoke(arg,now);
         }
     }

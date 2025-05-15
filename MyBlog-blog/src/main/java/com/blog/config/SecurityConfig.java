@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 除上面外的所有请求全部不需要认证即可访问
                 .antMatchers("/logout").authenticated()
                 .antMatchers("/comment").authenticated()
+                .antMatchers("/user/userInfo").authenticated()
                 .anyRequest().permitAll();
 
 

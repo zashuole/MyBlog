@@ -13,6 +13,9 @@ public enum OperationType {
     /**
      * 插入操作
      */
-    INSERT
-
+    INSERT,
+    /**
+     * 注册操纵
+     */
+    REGISTER
 }
