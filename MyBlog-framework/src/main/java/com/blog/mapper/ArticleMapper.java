@@ -20,4 +20,6 @@ public interface ArticleMapper {
 
     @Select("select * from article where id = #{id}")
     Article getArticleDetail(Long id);
+
+    Map<Long, Integer> getIdAndViewCount();
 }

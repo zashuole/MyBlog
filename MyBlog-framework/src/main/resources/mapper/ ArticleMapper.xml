@@ -18,4 +18,9 @@
         WHERE a.category_id = #{categoryId}
         ORDER BY a.view_count DESC
     </select>
+
+    <select id="getIdAndViewCount" resultType="map">
+        SELECT id, view_count
+        FROM article
+    </select>
 </mapper>
