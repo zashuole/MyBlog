@@ -158,7 +158,7 @@ public class RedisCache
      * @param key
      * @param dataMap
      */
-    public <T> void setCacheMap(final String key, final Map<String, T> dataMap)
+    public <T> void setCacheMap(final String key, final Map<Long, T> dataMap)
     {
         if (dataMap != null) {
             redisTemplate.opsForHash().putAll(key, dataMap);

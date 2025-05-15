@@ -18,5 +18,4 @@
         WHERE a.category_id = #{categoryId}
         ORDER BY a.view_count DESC
     </select>
-
 </mapper>

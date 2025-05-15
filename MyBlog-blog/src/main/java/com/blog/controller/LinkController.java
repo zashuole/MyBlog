@@ -1,6 +1,7 @@
 package com.blog.controller;
 
 
+import com.blog.annotation.SystemLog;
 import com.blog.pojo.vo.AllLinkVo;
 import com.blog.result.Result;
 import com.blog.pojo.entity.Link;
@@ -18,6 +19,7 @@ public class LinkController {
     @Autowired
     private LinkService linkService;
 
+    @SystemLog(businessName = "获取全部友链")
     @GetMapping("getAllLink")
     public Result<List<AllLinkVo>> getAllLink() {
         return Result.success(linkService.getAllLink());
