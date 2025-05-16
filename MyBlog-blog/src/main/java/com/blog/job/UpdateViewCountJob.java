@@ -19,7 +19,6 @@ public class UpdateViewCountJob {
     private ArticleMapper articleMapper;
 
     @Scheduled(cron = "0/60 * * * * ?")
-    @SystemLog(businessName = "更新countView数据库中的数据")
     public void updateViewCount() {
         //获取redis的浏览量
         Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
