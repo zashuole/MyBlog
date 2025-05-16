@@ -5,6 +5,7 @@ import com.blog.pojo.entity.Article;
 import com.blog.pojo.vo.ArticleListVo;
 import com.blog.pojo.vo.HotArticleVo;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -21,5 +22,6 @@ public interface ArticleMapper {
     @Select("select * from article where id = #{id}")
     Article getArticleDetail(Long id);
 
-    Map<Long, Integer> getIdAndViewCount();
+    @Select("SELECT id, view_count FROM article")
+    List<Map<String, Object>> getIdAndViewCountRaw();
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -20,8 +22,14 @@ public class ViewCountRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         //查询博客信息  id viewCount
-        Map<Long, Integer> map = articleMapper.getIdAndViewCount();
-        redisCache.setCacheMap("articlu:viewCount",map);
+        List<Map<String, Object>> rawList = articleMapper.getIdAndViewCountRaw();
+        Map<String, Integer> map = new HashMap<>();
+        for (Map<String, Object> rawmap : rawList) {
+            String id = String.valueOf(((Number) rawmap.get("id")).longValue());
+            Integer count = ((Number) rawmap.get("view_count")).intValue();
+            map.put(id, count);
+        }
         //存储到redis中
+        redisCache.setCacheMap("article:viewCount",map);
     }
 }
