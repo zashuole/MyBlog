@@ -1,5 +1,6 @@
 package com.blog.controller;
 
+import com.blog.annotation.SystemLog;
 import com.blog.enums.AppHttpCodeEnum;
 import com.blog.exception.SystemException;
 import com.blog.pojo.entity.User;
@@ -17,6 +18,7 @@ public class BlogLoginController {
     private BlogLoginService blogLoginService;
 
     @PostMapping("/login")
+    @SystemLog(businessName = "登录")
     public Result login(@RequestBody User user){
         if(!StringUtils.hasText(user.getUserName())){
             //提示，必须要传用户名
@@ -25,6 +27,7 @@ public class BlogLoginController {
         return blogLoginService.login(user);
     }
     @PostMapping("/logout")
+    @SystemLog(businessName = "退出登录")
     public Result logout(){
         return blogLoginService.logout();
     }

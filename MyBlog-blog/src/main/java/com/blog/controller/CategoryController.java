@@ -1,6 +1,7 @@
 package com.blog.controller;
 
 
+import com.blog.annotation.SystemLog;
 import com.blog.pojo.vo.CategoryVo;
 import com.blog.result.PageBean;
 import com.blog.result.Result;
@@ -21,6 +22,7 @@ public class CategoryController {
 
     //查询分类
     @GetMapping("getCategoryList")
+    @SystemLog(businessName = "查询分类")
     public Result<List<CategoryVo>> getCategoryList() {
         return Result.success(categoryService.getCategoryList());
     }

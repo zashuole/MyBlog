@@ -15,4 +15,6 @@ public interface ArticleService {
     PageBean articleList(int pageNum, int pageSize, Long categoryId);
 
     Article getArticleDetail(Long id);
+
+    void updateViewCount(Long id);
 }
