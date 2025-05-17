@@ -20,7 +20,6 @@ public class UploadController {
     private AliOSSUtils aliOSSUtils;
 
     @PostMapping
-    @SystemLog(businessName = "上传图片到阿里云OSS")
         public Result<String> upload(MultipartFile img) throws IOException {
         String url = aliOSSUtils.upload(img);
         return Result.success(url);

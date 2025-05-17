@@ -46,6 +46,7 @@ public class CommentServiceImpl implements CommentService {
             //首先根据creatBy来查询用户的昵称并赋值
             User user = userMapper.getById(comment.getCreateBy());
             commentVo.setUsername(user.getNickName());
+            commentVo.setAvatar(user.getAvatar());
             if(comment.getToCommentId() ==-1){
                 //查询所有的子评论
                 List<Comment>  childenComment = getAllChildenCommentById(comment.getId());
@@ -57,6 +58,7 @@ public class CommentServiceImpl implements CommentService {
                     BeanUtils.copyProperties(childComment, childCommentVo);
                     User childUser = userMapper.getById(childComment.getCreateBy());
                     childCommentVo.setUsername(childUser.getNickName());
+                    childCommentVo.setAvatar(childUser.getAvatar());
                     User toUser = userMapper.getById(childComment.getToCommentUserId());
                     childCommentVo.setToCommentUserName(toUser.getNickName());
                     childen.add(childCommentVo);
@@ -107,6 +109,7 @@ public class CommentServiceImpl implements CommentService {
             //首先根据creatBy来查询用户的昵称并赋值
             User user = userMapper.getById(comment.getCreateBy());
             commentVo.setUsername(user.getNickName());
+            commentVo.setAvatar(user.getAvatar());
             if(comment.getToCommentId() ==-1){
                 //查询所有的子评论
                 List<Comment>  childenComment = getAllChildenLinkCommentById(comment.getId());
@@ -118,6 +121,7 @@ public class CommentServiceImpl implements CommentService {
                     BeanUtils.copyProperties(childComment, childCommentVo);
                     User childUser = userMapper.getById(childComment.getCreateBy());
                     childCommentVo.setUsername(childUser.getNickName());
+                    childCommentVo.setAvatar(childUser.getAvatar());
                     User toUser = userMapper.getById(childComment.getToCommentUserId());
                     childCommentVo.setToCommentUserName(toUser.getNickName());
                     childen.add(childCommentVo);
