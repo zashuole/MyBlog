@@ -5,10 +5,9 @@ import com.blog.mapper.RoleMapper;
 import com.blog.mapper.UserMapper;
 import com.blog.pojo.dto.UserLoginDto;
 import com.blog.pojo.entity.LoginUser;
+import com.blog.pojo.entity.Menu;
 import com.blog.pojo.entity.User;
-import com.blog.pojo.vo.BlogUserLoginVo;
-import com.blog.pojo.vo.UserInfoVo;
-import com.blog.pojo.vo.UserRABCInfoVO;
+import com.blog.pojo.vo.*;
 import com.blog.properties.JwtProperties;
 import com.blog.result.Result;
 import com.blog.service.LoginService;
@@ -65,20 +64,24 @@ public class LoginServiceImpl implements LoginService {
         UserRABCInfoVO userRABCInfoVO = new UserRABCInfoVO();
         //获取当前用户id
         Long userId = SecurityUtils.getUserId();
+        //根据id获取其用户权限名字
         String roles = roleMapper.getRolesByUserId(userId);
         userRABCInfoVO.setRoles(roles);
         //根据id查询其拥有的菜单id
         List<Integer> menuIds = roleMapper.getMenusIdByUserId(userId);
         //获取permissions
         List<String> permissions = new ArrayList<>();
-        //如果menus只有一条，即为超级管理员
+        //如果menuIds只有一条，即为超级管理员
         if(menuIds.size() == 1&&menuIds.get(0).intValue() == 0){
             //获取全部权限，状态为正常，未被删除的
             permissions = menuMapper.getAllPermsWhoAdmin();
         }else{
             for (Integer menuId : menuIds) {
                 //根据id查询并存入permissions
-                permissions.add(menuMapper.getPermBymenuId(menuId));
+                String permission = menuMapper.getPermBymenuId(menuId);
+                if(permission != null){
+                    permissions.add(permission);
+                }
             }
         }
         userRABCInfoVO.setPermissions(permissions);
@@ -88,5 +91,59 @@ public class LoginServiceImpl implements LoginService {
         BeanUtils.copyProperties(user,userInfoVo);
         userRABCInfoVO.setUser(userInfoVo);
         return userRABCInfoVO;
+    }
+
+    @Override
+    public MenusVo getRouters() {
+        //获取当前用户的id
+        Long userId = SecurityUtils.getUserId();
+        //根据id查询其拥有的菜单id
+        List<Integer> menuIds = roleMapper.getMenusIdByUserId(userId);
+        //获取用户所拥有的所有菜单
+        List<Menu> menus = new ArrayList<>();
+        //如果menus只有一条，即为超级管理员
+        if(menuIds.size() == 1&&menuIds.get(0).intValue() == 0){
+            //获取全部权限，状态为正常，未被删除的菜单
+            menus = menuMapper.getAllMenusWhoAdmin();
+        }else{
+            for (Integer menuId : menuIds) {
+                //根据id查询并存入permissions
+                Menu menu = menuMapper.getMenuBymenuId(menuId);
+                if(menu != null){
+                    menus.add(menu);
+                }
+            }
+        }
+        List<MenuDisplayVo> menuDisplayVos = buildMenuTree(menus);
+        MenusVo menusVo = new MenusVo();
+        menusVo.setMenus(menuDisplayVos);
+        return menusVo;
+    }
+    public List<MenuDisplayVo> buildMenuTree(List<Menu> menus) {
+        Map<Long, MenuDisplayVo> voMap = new HashMap<>();
+        List<MenuDisplayVo> rootList = new ArrayList<>();
+
+        for (Menu menu : menus) {
+            MenuDisplayVo vo = new MenuDisplayVo();
+            BeanUtils.copyProperties(menu,vo);
+            vo.setChildren(new ArrayList<>());
+            voMap.put(vo.getId(), vo);
+        }
+
+        for (Menu menu : menus) {
+            Long parentId = menu.getParentId();
+            MenuDisplayVo currentVo = voMap.get(menu.getId());
+
+            if (parentId == 0) {
+                rootList.add(currentVo);
+            } else {
+                MenuDisplayVo parentVo = voMap.get(parentId);
+                if (parentVo != null) {
+                    parentVo.getChildren().add(currentVo);
+                }
+            }
+        }
+
+        return rootList;
     }
 }
