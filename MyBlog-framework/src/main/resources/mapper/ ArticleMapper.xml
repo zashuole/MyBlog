@@ -23,4 +23,13 @@
         SELECT id, view_count
         FROM article
     </select>
+    <insert id="addArticle" parameterType="com.blog.pojo.entity.Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article (
+            title, content, summary, category_id, thumbnail, is_top, status,
+            view_count, is_comment, create_by, create_time, update_by, update_time, del_flag
+        ) VALUES (
+                     #{title}, #{content}, #{summary}, #{categoryId}, #{thumbnail}, #{isTop}, #{status},
+                     #{viewCount}, #{isComment}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{delFlag}
+                 )
+    </insert>
 </mapper>

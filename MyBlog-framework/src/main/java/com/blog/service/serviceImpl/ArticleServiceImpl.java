@@ -1,6 +1,8 @@
 package com.blog.service.serviceImpl;
 
 import com.blog.mapper.ArticleMapper;
+import com.blog.mapper.ArticleTagMapper;
+import com.blog.pojo.dto.ArticalDto;
 import com.blog.pojo.entity.Article;
 import com.blog.pojo.vo.ArticleListVo;
 import com.blog.pojo.vo.HotArticleVo;
@@ -9,6 +11,7 @@ import com.blog.service.ArticleService;
 import com.blog.utils.RedisCache;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,9 @@ import java.util.Map;
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleMapper articleMapper;
+
+    @Autowired
+    private ArticleTagMapper articleTagMapper;
 
     @Autowired
     private RedisCache redisCache;
@@ -79,5 +85,20 @@ public class ArticleServiceImpl implements ArticleService {
     public void updateViewCount(Long id) {
         //更新redis里的浏览量
         redisCache.incrementCacheMapValue("article:viewCount",id.toString(),1);
+    }
+
+    @Override
+    public void addArtical(ArticalDto articalDto) {
+        Article article = new Article();
+        BeanUtils.copyProperties(articalDto, article);
+        article.setDelFlag(0);
+        article.setViewCount(0L);
+        //插入article并设置主键返回
+        articleMapper.addArticle(article);
+        Long articleId = article.getId();
+        List<Long> tags = articalDto.getTags();
+        for (Long tagId : tags) {
+            articleTagMapper.insert(articleId,tagId);
+        }
     }
 }

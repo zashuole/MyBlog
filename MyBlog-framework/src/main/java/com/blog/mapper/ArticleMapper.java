@@ -1,6 +1,8 @@
 package com.blog.mapper;
 
 
+import com.blog.annotation.AutoFill;
+import com.blog.pojo.common.OperationType;
 import com.blog.pojo.entity.Article;
 import com.blog.pojo.vo.ArticleListVo;
 import com.blog.pojo.vo.HotArticleVo;
@@ -25,4 +27,7 @@ public interface ArticleMapper {
 
     @Update("UPDATE article SET view_count = #{viewCount} WHERE id = #{id}")
     void updateViewCountById(@Param("id") Long id, @Param("viewCount") Integer viewCount);
+
+    @AutoFill(OperationType.INSERT)
+    void addArticle(Article article);
 }

@@ -2,6 +2,7 @@ package com.blog.service;
 
 
 
+import com.blog.pojo.dto.ArticalDto;
 import com.blog.pojo.entity.Article;
 import com.blog.pojo.vo.HotArticleVo;
 import com.blog.result.PageBean;
@@ -17,4 +18,6 @@ public interface ArticleService {
     Article getArticleDetail(Long id);
 
     void updateViewCount(Long id);
+
+    void addArtical(ArticalDto articalDto);
 }
