@@ -39,4 +39,9 @@ public class LoginController {
     public Result<MenusVo> getRouters() {
         return Result.success(loginService.getRouters());
     }
+    @PostMapping("/user/logout")
+    public Result logout() {
+        loginService.logout();
+        return Result.success();
+    }
 }

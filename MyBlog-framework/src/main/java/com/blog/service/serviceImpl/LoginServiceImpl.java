@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -119,6 +120,18 @@ public class LoginServiceImpl implements LoginService {
         menusVo.setMenus(menuDisplayVos);
         return menusVo;
     }
+
+    @Override
+    public void logout() {
+        //获取token 解析获取userId
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoginUser loginUser = (LoginUser)authentication.getPrincipal();
+        //获取userId
+        Long userId = loginUser.getUser().getId();
+        //删除redis中的用户信息
+        redisCache.deleteObject("login:"+userId);
+    }
+
     public List<MenuDisplayVo> buildMenuTree(List<Menu> menus) {
         Map<Long, MenuDisplayVo> voMap = new HashMap<>();
         List<MenuDisplayVo> rootList = new ArrayList<>();

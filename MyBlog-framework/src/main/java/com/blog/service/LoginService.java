@@ -14,4 +14,6 @@ public interface LoginService {
     UserRABCInfoVO getInfo();
 
     MenusVo getRouters();
+
+    void logout();
 }
