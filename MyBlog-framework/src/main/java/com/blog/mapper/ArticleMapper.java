@@ -30,4 +30,16 @@ public interface ArticleMapper {
 
     @AutoFill(OperationType.INSERT)
     void addArticle(Article article);
+
+    @Select("select * from article")
+    Page<ArticleListVo> list();
+
+    @AutoFill(OperationType.UPDATE)
+    void updateArticle(Article article);
+
+    @Select("select id from article where title = #{title}")
+    Long getIdByTitle(String title);
+
+    @Select("select * from article where title = #{title}")
+    Article getArticleByTitle(String title);
 }

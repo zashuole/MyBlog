@@ -2,8 +2,9 @@ package com.blog.service;
 
 
 
-import com.blog.pojo.dto.ArticalDto;
+import com.blog.pojo.dto.ArticleDto;
 import com.blog.pojo.entity.Article;
+import com.blog.pojo.vo.ArticleVo;
 import com.blog.pojo.vo.HotArticleVo;
 import com.blog.result.PageBean;
 
@@ -19,5 +20,11 @@ public interface ArticleService {
 
     void updateViewCount(Long id);
 
-    void addArtical(ArticalDto articalDto);
+    void addArtical(ArticleDto articleDto);
+
+    PageBean list(int pageNum, int pageSize);
+
+    ArticleVo getAdminArticleById(Long id);
+
+    void updateArtical(ArticleDto articalDto);
 }

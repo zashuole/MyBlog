@@ -2,8 +2,9 @@ package com.blog.service.serviceImpl;
 
 import com.blog.mapper.ArticleMapper;
 import com.blog.mapper.ArticleTagMapper;
-import com.blog.pojo.dto.ArticalDto;
+import com.blog.pojo.dto.ArticleDto;
 import com.blog.pojo.entity.Article;
+import com.blog.pojo.vo.ArticleVo;
 import com.blog.pojo.vo.ArticleListVo;
 import com.blog.pojo.vo.HotArticleVo;
 import com.blog.result.PageBean;
@@ -88,17 +89,57 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void addArtical(ArticalDto articalDto) {
+    public void addArtical(ArticleDto articleDto) {
         Article article = new Article();
-        BeanUtils.copyProperties(articalDto, article);
+        //把标题作为不可重复项
+        Article article1 = articleMapper.getArticleByTitle(article.getTitle());
+        if(article1!=null){
+            throw new RuntimeException("请换一个标题");
+        }
+        BeanUtils.copyProperties(articleDto, article);
         article.setDelFlag(0);
         article.setViewCount(0L);
         //插入article并设置主键返回
         articleMapper.addArticle(article);
         Long articleId = article.getId();
-        List<Long> tags = articalDto.getTags();
+        List<Long> tags = articleDto.getTags();
         for (Long tagId : tags) {
             articleTagMapper.insert(articleId,tagId);
+        }
+    }
+
+    @Override
+    public PageBean list(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Page<ArticleListVo> list =articleMapper.list();
+        return new PageBean(list.getTotal(), list.getResult());
+    }
+
+    @Override
+    public ArticleVo getAdminArticleById(Long id) {
+        Article article = articleMapper.getArticleDetail(id);
+        ArticleVo articleVo = new ArticleVo();
+        BeanUtils.copyProperties(article, articleVo);
+        Long articleId = article.getId();
+        List<Long> tags = articleTagMapper.getTagsById(articleId);
+        articleVo.setTags(tags);
+        return articleVo;
+    }
+
+    @Override
+    public void updateArtical(ArticleDto articleDto) {
+        Article article = new Article();
+        BeanUtils.copyProperties(articleDto, article);
+        //前端不返回id，暂时先用图片当成唯一路径
+        Long articleId = articleMapper.getIdByTitle(article.getTitle());
+        article.setId(articleId);
+        article.setDelFlag(0);
+        //文章浏览量不变
+        articleMapper.updateArticle(article);
+        List<Long> tags = articleDto.getTags();
+        articleTagMapper.deleteArticle(articleId);
+        for (Long tagId : tags) {
+            articleTagMapper.insert(articleId, tagId);
         }
     }
 }

@@ -1,13 +1,12 @@
 package com.blog.controller;
 
-import com.blog.pojo.dto.ArticalDto;
+import com.blog.pojo.dto.ArticleDto;
+import com.blog.pojo.vo.ArticleVo;
+import com.blog.result.PageBean;
 import com.blog.result.Result;
 import com.blog.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/content/article")
@@ -17,9 +16,21 @@ public class ArticalController {
     private ArticleService articleService;
 
     @PostMapping()
-    public Result addArtical(@RequestBody ArticalDto articalDto){
-        articleService.addArtical(articalDto);
+    public Result addArtical(@RequestBody ArticleDto articleDto){
+        articleService.addArtical(articleDto);
         return Result.success();
     }
-
+    @GetMapping("list")
+    public Result<PageBean> list(int pageNum,int pageSize){
+        return Result.success(articleService.list(pageNum,pageSize));
+    }
+    @GetMapping("{id}")
+    public Result<ArticleVo> getArtical(@PathVariable Long id){
+        return Result.success(articleService.getAdminArticleById(id));
+    }
+    @PutMapping()
+    public Result updateArtical(@RequestBody ArticleDto articleDto){
+        articleService.updateArtical(articleDto);
+        return Result.success();
+    }
 }

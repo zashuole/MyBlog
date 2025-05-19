@@ -32,4 +32,20 @@
                      #{viewCount}, #{isComment}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{delFlag}
                  )
     </insert>
+    <update id="updateArticle" parameterType="com.blog.pojo.entity.Article">
+        UPDATE article
+        SET
+            title = #{title},
+            content = #{content},
+            summary = #{summary},
+            category_id = #{categoryId},
+            thumbnail = #{thumbnail},
+            is_top = #{isTop},
+            status = #{status},
+            is_comment = #{isComment},
+            update_by = #{updateBy},
+            update_time = #{updateTime},
+            del_flag = #{delFlag}
+        WHERE id = #{id}
+    </update>
 </mapper>

@@ -5,7 +5,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ArticalDto {
+public class ArticleDto {
+    private Long id;
     /**
      标题
      **/
