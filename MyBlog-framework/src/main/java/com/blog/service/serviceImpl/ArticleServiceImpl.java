@@ -92,7 +92,7 @@ public class ArticleServiceImpl implements ArticleService {
     public void addArtical(ArticleDto articleDto) {
         Article article = new Article();
         //把标题作为不可重复项
-        Article article1 = articleMapper.getArticleByTitle(article.getTitle());
+        Article article1 = articleMapper.getArticleByTitle(articleDto.getTitle());
         if(article1!=null){
             throw new RuntimeException("请换一个标题");
         }
