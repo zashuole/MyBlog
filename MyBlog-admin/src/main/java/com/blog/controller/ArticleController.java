@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/content/article")
-public class ArticalController {
+public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
 
     @PostMapping()
-    public Result addArtical(@RequestBody ArticleDto articleDto){
+    public Result addArticle(@RequestBody ArticleDto articleDto){
         articleService.addArtical(articleDto);
         return Result.success();
     }
@@ -25,12 +25,17 @@ public class ArticalController {
         return Result.success(articleService.list(pageNum,pageSize));
     }
     @GetMapping("{id}")
-    public Result<ArticleVo> getArtical(@PathVariable Long id){
+    public Result<ArticleVo> getArticle(@PathVariable Long id){
         return Result.success(articleService.getAdminArticleById(id));
     }
     @PutMapping()
-    public Result updateArtical(@RequestBody ArticleDto articleDto){
+    public Result updateArticle(@RequestBody ArticleDto articleDto){
         articleService.updateArtical(articleDto);
+        return Result.success();
+    }
+    @DeleteMapping("{id}")
+    public Result deleteArticle(@PathVariable Long id){
+        articleService.deleteArticleById(id);
         return Result.success();
     }
 }

@@ -13,5 +13,5 @@ public interface ArticleTagMapper {
     List<Long> getTagsById(Long articleId);
 
     @Delete("delete from article_tag where article_id = #{articleId}")
-    void deleteArticle(Long articleId);
+    void deleteArticleMap(Long articleId);
 }

@@ -42,4 +42,7 @@ public interface ArticleMapper {
 
     @Select("select * from article where title = #{title}")
     Article getArticleByTitle(String title);
+
+    @Delete("delete from article where id = #{id}")
+    void deleteArticleById(Long id);
 }

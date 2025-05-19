@@ -69,7 +69,7 @@ public class LoginServiceImpl implements LoginService {
         String roles = roleMapper.getRolesByUserId(userId);
         userRABCInfoVO.setRoles(roles);
         //根据id查询其拥有的菜单id
-        List<Integer> menuIds = roleMapper.getMenusIdByUserId(userId);
+        List<Long> menuIds = roleMapper.getMenusIdByUserId(userId);
         //获取permissions
         List<String> permissions = new ArrayList<>();
         //如果menuIds只有一条，即为超级管理员
@@ -77,7 +77,7 @@ public class LoginServiceImpl implements LoginService {
             //获取全部权限，状态为正常，未被删除的
             permissions = menuMapper.getAllPermsWhoAdmin();
         }else{
-            for (Integer menuId : menuIds) {
+            for (Long menuId : menuIds) {
                 //根据id查询并存入permissions
                 String permission = menuMapper.getPermBymenuId(menuId);
                 if(permission != null){
@@ -99,7 +99,7 @@ public class LoginServiceImpl implements LoginService {
         //获取当前用户的id
         Long userId = SecurityUtils.getUserId();
         //根据id查询其拥有的菜单id
-        List<Integer> menuIds = roleMapper.getMenusIdByUserId(userId);
+        List<Long> menuIds = roleMapper.getMenusIdByUserId(userId);
         //获取用户所拥有的所有菜单
         List<Menu> menus = new ArrayList<>();
         //如果menus只有一条，即为超级管理员
@@ -107,7 +107,7 @@ public class LoginServiceImpl implements LoginService {
             //获取全部权限，状态为正常，未被删除的菜单
             menus = menuMapper.getAllMenusWhoAdmin();
         }else{
-            for (Integer menuId : menuIds) {
+            for (Long menuId : menuIds) {
                 //根据id查询并存入permissions
                 Menu menu = menuMapper.getMenuBymenuId(menuId);
                 if(menu != null){

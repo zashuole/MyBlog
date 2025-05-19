@@ -137,9 +137,17 @@ public class ArticleServiceImpl implements ArticleService {
         //文章浏览量不变
         articleMapper.updateArticle(article);
         List<Long> tags = articleDto.getTags();
-        articleTagMapper.deleteArticle(articleId);
+        articleTagMapper.deleteArticleMap(articleId);
         for (Long tagId : tags) {
             articleTagMapper.insert(articleId, tagId);
         }
+    }
+
+    @Override
+    public void deleteArticleById(Long id) {
+        //删博文
+        articleMapper.deleteArticleById(id);
+        //删博文对应标签
+        articleTagMapper.deleteArticleMap(id);
     }
 }
