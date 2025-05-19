@@ -1,9 +1,10 @@
-package com.blog.pojo.entity;
+package com.blog.pojo.dto;
 
 import lombok.Data;
 
 @Data
-public class TagDto {
+public class UpDateTagDto {
+    private Long id;
     private String name;
     private String remark;
 }

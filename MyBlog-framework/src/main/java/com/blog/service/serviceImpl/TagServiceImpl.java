@@ -1,10 +1,9 @@
 package com.blog.service.serviceImpl;
 
-import com.blog.mapper.CategoryMapper;
 import com.blog.mapper.TagMapper;
+import com.blog.pojo.dto.UpDateTagDto;
 import com.blog.pojo.entity.Tag;
-import com.blog.pojo.entity.TagDto;
-import com.blog.pojo.vo.CategoryVo;
+import com.blog.pojo.dto.TagDto;
 import com.blog.pojo.vo.TagVo;
 import com.blog.result.PageBean;
 import com.blog.service.TagService;
@@ -46,5 +45,27 @@ public class TagServiceImpl implements TagService {
         BeanUtils.copyProperties(tagDto, tag);
         tag.setDelFlag(0);
         tagMapper.add(tag);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        Tag tag = new Tag();
+        tag.setId(id);
+        tagMapper.deleteById(tag);
+    }
+
+    @Override
+    public TagVo getById(Long id) {
+        Tag tag = tagMapper.getById(id);
+        TagVo tagVo = new TagVo();
+        BeanUtils.copyProperties(tag, tagVo);
+        return tagVo;
+    }
+
+    @Override
+    public void update(UpDateTagDto upDateTagDto) {
+        Tag tag = new Tag();
+        BeanUtils.copyProperties(upDateTagDto, tag);
+        tagMapper.updateById(tag);
     }
 }

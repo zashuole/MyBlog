@@ -1,6 +1,7 @@
 package com.blog.service.serviceImpl;
 
 import com.blog.mapper.CategoryMapper;
+import com.blog.pojo.vo.AdminCategoryVo;
 import com.blog.pojo.vo.CategoryVo;
 import com.blog.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,5 +17,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryVo> getCategoryList() {
         return categoryMapper.getCategoryList();
+    }
+
+    @Override
+    public List<AdminCategoryVo> getAdminCategoryList() {
+        return categoryMapper.getAdminCategoryList();
     }
 }
