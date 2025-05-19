@@ -68,4 +68,16 @@ public class TagServiceImpl implements TagService {
         BeanUtils.copyProperties(upDateTagDto, tag);
         tagMapper.updateById(tag);
     }
+
+    @Override
+    public List<TagVo> listAllTag() {
+        List<Tag> list = tagMapper.list();
+        List<TagVo> tagVo = new ArrayList<>();
+        for (Tag tag : list) {
+            TagVo tagVo1 = new TagVo();
+            BeanUtils.copyProperties(tag, tagVo1);
+            tagVo.add(tagVo1);
+        }
+        return tagVo;
+    }
 }

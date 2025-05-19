@@ -10,6 +10,8 @@ import com.blog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/content/tag")
 public class TagController {
@@ -39,5 +41,9 @@ public class TagController {
     public Result update(@RequestBody UpDateTagDto upDateTagDto) {
         tagService.update(upDateTagDto);
         return Result.success();
+    }
+    @GetMapping("/listAllTag")
+    public Result<List<TagVo>> listAllTag() {
+        return Result.success(tagService.listAllTag());
     }
 }

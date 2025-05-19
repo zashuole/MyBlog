@@ -5,6 +5,8 @@ import com.blog.pojo.dto.UpDateTagDto;
 import com.blog.pojo.vo.TagVo;
 import com.blog.result.PageBean;
 
+import java.util.List;
+
 public interface TagService {
     PageBean page(int pageNum, int pageSize);
 
@@ -15,4 +17,6 @@ public interface TagService {
     TagVo getById(Long id);
 
     void update(UpDateTagDto upDateTagDto);
+
+    List<TagVo> listAllTag();
 }
