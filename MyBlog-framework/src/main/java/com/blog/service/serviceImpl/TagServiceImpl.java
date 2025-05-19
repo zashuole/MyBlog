@@ -3,6 +3,7 @@ package com.blog.service.serviceImpl;
 import com.blog.mapper.CategoryMapper;
 import com.blog.mapper.TagMapper;
 import com.blog.pojo.entity.Tag;
+import com.blog.pojo.entity.TagDto;
 import com.blog.pojo.vo.CategoryVo;
 import com.blog.pojo.vo.TagVo;
 import com.blog.result.PageBean;
@@ -37,5 +38,13 @@ public class TagServiceImpl implements TagService {
             tagVo.add(tagVo1);
         }
         return new PageBean(pageInfo.getTotal(), tagVo);
+    }
+
+    @Override
+    public void add(TagDto tagDto) {
+        Tag tag = new Tag();
+        BeanUtils.copyProperties(tagDto, tag);
+        tag.setDelFlag(0);
+        tagMapper.add(tag);
     }
 }
