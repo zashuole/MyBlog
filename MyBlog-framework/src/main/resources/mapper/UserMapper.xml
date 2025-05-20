@@ -58,4 +58,39 @@
                      #{delFlag}
                  )
     </insert>
+    <insert id="insertUser" parameterType="com.blog.pojo.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `sys_user` (
+            id,
+            user_name,
+            nick_name,
+            password,
+            type,
+            status,
+            email,
+            phonenumber,
+            sex,
+            avatar,
+            create_by,
+            create_time,
+            update_by,
+            update_time,
+            del_flag
+        ) VALUES (
+                     #{id},
+                     #{userName},
+                     #{nickName},
+                     #{password},
+                     #{type},
+                     #{status},
+                     #{email},
+                     #{phonenumber},
+                     #{sex},
+                     #{avatar},
+                     #{createBy},
+                     #{createTime},
+                     #{updateBy},
+                     #{updateTime},
+                     #{delFlag}
+                 )
+    </insert>
 </mapper>

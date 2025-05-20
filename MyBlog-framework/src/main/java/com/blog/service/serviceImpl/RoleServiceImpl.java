@@ -53,4 +53,9 @@ public class RoleServiceImpl implements RoleService {
     public void deleteById(Long id) {
         roleMapper.deleteById(id);
     }
+
+    @Override
+    public List<Role> getAllRole() {
+        return roleMapper.getAllRole();
+    }
 }

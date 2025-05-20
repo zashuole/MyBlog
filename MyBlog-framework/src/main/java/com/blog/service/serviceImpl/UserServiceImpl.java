@@ -2,17 +2,24 @@ package com.blog.service.serviceImpl;
 
 import com.blog.enums.AppHttpCodeEnum;
 import com.blog.exception.SystemException;
+import com.blog.mapper.RoleMapper;
 import com.blog.mapper.UserMapper;
 import com.blog.pojo.dto.RegisterUserDto;
 import com.blog.pojo.dto.UpdateUserInfoDto;
+import com.blog.pojo.dto.UserDto;
 import com.blog.pojo.entity.User;
 import com.blog.pojo.vo.UserInfoVo;
+import com.blog.result.PageBean;
 import com.blog.service.UserService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -21,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Override
     public UserInfoVo getById(Long userId) {
@@ -64,5 +74,32 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(registerUserDto, registerUser);
         //存入数据库
         userMapper.insert(registerUser);
+    }
+
+    @Override
+    public PageBean list(int pageNum, int pageSize) {
+        // 开启分页
+        PageHelper.startPage(pageNum, pageSize);
+        Page<User> userList = userMapper.getlist();
+        return new PageBean(userList.getTotal(), userList.getResult());
+    }
+
+    @Override
+    public void save(UserDto userDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userDto, user);
+        user.setDelFlag(0);
+        user.setType("0");
+        userMapper.insertUser(user);
+        List<Long> roleIds = userDto.getRoleIds();
+        for (Long roleId : roleIds) {
+            roleMapper.insertUserRole(user.getId(),roleId);
+        }
+    }
+
+    @Override
+    public void delete(Long userId) {
+        userMapper.deleteById(userId);
+        roleMapper.deleteUserRoleById(userId);
     }
 }

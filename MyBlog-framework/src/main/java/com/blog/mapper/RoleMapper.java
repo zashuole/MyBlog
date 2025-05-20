@@ -41,4 +41,13 @@ public interface RoleMapper {
 
     @Update("update sys_role set del_flag = 1 where id = #{id}")
     void deleteById(Long id);
+
+    @Select("select * from sys_role where del_flag = 0")
+    List<Role> getAllRole();
+
+    @Insert("insert into sys_user_role (user_id, role_id) VALUES (#{userId},#{roleId})")
+    void insertUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
+
+    @Delete("delete from sys_user_role where user_id = #{userId}")
+    void deleteUserRoleById(Long userId);
 }

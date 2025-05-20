@@ -41,4 +41,8 @@ public class RoleController {
         roleService.deleteById(id);
         return Result.success();
     }
+    @GetMapping("/listAllRole")
+    public Result<List<Role>> listAllRole(){
+        return Result.success(roleService.getAllRole());
+    }
 }
