@@ -19,7 +19,7 @@ public interface RoleMapper {
     @Select("SELECT DISTINCT rm.menu_id FROM sys_user_role ur JOIN sys_role_menu rm ON ur.role_id = rm.role_id WHERE ur.user_id = #{userId}")
     List<Long> getMenusIdByUserId(Long userId);
 
-    @Select("select * from sys_role where del_flag = 0")
+    @Select("select * from sys_role")
     Page<Role> list();
 
     @AutoFill(OperationType.UPDATE)
