@@ -1,7 +1,8 @@
 package com.blog.service;
 
 import com.blog.pojo.entity.Menu;
-import com.blog.pojo.vo.MenusVO2;
+import com.blog.pojo.vo.MenusVo2;
+import com.blog.pojo.vo.MenusVo3;
 
 import java.util.List;
 
@@ -16,5 +17,7 @@ public interface Menuservice {
 
     void updateMenu(Menu menu);
 
-    List<MenusVO2> getTree();
+    List<MenusVo2> getTree();
+
+    MenusVo3 getTreeByRoleId(Long roleId);
 }

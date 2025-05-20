@@ -1,7 +1,8 @@
 package com.blog.controller;
 
 import com.blog.pojo.entity.Menu;
-import com.blog.pojo.vo.MenusVO2;
+import com.blog.pojo.vo.MenusVo2;
+import com.blog.pojo.vo.MenusVo3;
 import com.blog.result.Result;
 import com.blog.service.Menuservice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,11 @@ public class MenuController {
         return Result.success();
     }
     @GetMapping("/treeselect")
-    public Result<List<MenusVO2>> getMenuTree() {
+    public Result<List<MenusVo2>> getMenuTree() {
         return Result.success(menuservice.getTree());
+    }
+    @GetMapping("/roleMenuTreeselect/{id}")
+    public Result<MenusVo3> getMenuTree(@PathVariable Long id) {
+        return Result.success(menuservice.getTreeByRoleId(id));
     }
 }
