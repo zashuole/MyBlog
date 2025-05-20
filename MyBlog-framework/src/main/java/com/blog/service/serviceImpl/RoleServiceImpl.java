@@ -2,11 +2,13 @@ package com.blog.service.serviceImpl;
 
 import com.blog.mapper.RoleMapper;
 import com.blog.pojo.dto.ChangeStatusDto;
+import com.blog.pojo.dto.RoleDto;
 import com.blog.pojo.entity.Role;
 import com.blog.result.PageBean;
 import com.blog.service.RoleService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +30,17 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void changeStatus(ChangeStatusDto changeStatusDto) {
         roleMapper.changeStatus(changeStatusDto);
+    }
+
+    @Override
+    public void addRole(RoleDto roleDto) {
+        Role role = new Role();
+        BeanUtils.copyProperties(roleDto, role);
+        //主键返回
+        roleMapper.addRole(role);
+        List<Long> menuIds = roleDto.getMenuIds();
+        for (Long menuId : menuIds) {
+            roleMapper.addRoleMenu(role.getId(),menuId);
+        }
     }
 }

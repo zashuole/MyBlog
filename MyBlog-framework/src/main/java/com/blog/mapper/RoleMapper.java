@@ -5,9 +5,7 @@ import com.blog.pojo.common.OperationType;
 import com.blog.pojo.dto.ChangeStatusDto;
 import com.blog.pojo.entity.Role;
 import com.github.pagehelper.Page;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -26,4 +24,10 @@ public interface RoleMapper {
     @AutoFill(OperationType.UPDATE)
     @Update("update sys_role set status = #{status},update_by = #{updateBy},update_time = #{updateTime} where id = #{roleId}")
     void changeStatus(ChangeStatusDto changeStatusDto);
+
+    @AutoFill(OperationType.INSERT)
+    Long addRole(Role role);
+
+    @Insert("INSERT INTO sys_role_menu(role_id, menu_id) VALUES (#{roleId}, #{menuId})")
+    void addRoleMenu(@Param("roleId") Long roleId, @Param("menuId") Long menuId);
 }
