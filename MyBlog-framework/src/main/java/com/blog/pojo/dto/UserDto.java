@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class UserDto {
+    private Long id;
     /**
      用户名
      **/

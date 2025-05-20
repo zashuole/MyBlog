@@ -50,4 +50,10 @@ public interface RoleMapper {
 
     @Delete("delete from sys_user_role where user_id = #{userId}")
     void deleteUserRoleById(Long userId);
+
+    @Select("select role_id from sys_user_role where user_id = #{userId}")
+    List<Long> getRolesIdByUserId(Long userId);
+
+    @Select("select * from sys_role where id = #{roleId}")
+    Role getRolesByroleId(Long roleId);
 }

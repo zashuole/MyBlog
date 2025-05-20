@@ -37,4 +37,8 @@ public interface UserMapper {
 
     @Update("update sys_user set del_flag = 1 where id = #{userId}")
     void deleteById(Long userId);
+
+
+    @AutoFill(OperationType.UPDATE)
+    void updateWithNoPassWord(User user);
 }

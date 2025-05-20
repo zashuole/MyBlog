@@ -7,8 +7,10 @@ import com.blog.mapper.UserMapper;
 import com.blog.pojo.dto.RegisterUserDto;
 import com.blog.pojo.dto.UpdateUserInfoDto;
 import com.blog.pojo.dto.UserDto;
+import com.blog.pojo.entity.Role;
 import com.blog.pojo.entity.User;
 import com.blog.pojo.vo.UserInfoVo;
+import com.blog.pojo.vo.UserVo;
 import com.blog.result.PageBean;
 import com.blog.service.UserService;
 import com.github.pagehelper.Page;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -101,5 +104,35 @@ public class UserServiceImpl implements UserService {
     public void delete(Long userId) {
         userMapper.deleteById(userId);
         roleMapper.deleteUserRoleById(userId);
+    }
+
+    @Override
+    public UserVo getUserDetailById(Long userId) {
+        UserVo userVo = new UserVo();
+        //根据Id查询其拥有的角色Id
+        List<Long> roleIds = roleMapper.getRolesIdByUserId(userId);
+        userVo.setRoleIds(roleIds);
+        //根据角色id查询角色
+        List<Role> roles = new ArrayList<>();
+        for(Long roleId : roleIds){
+            roles.add(roleMapper.getRolesByroleId(roleId));
+        }
+        userVo.setRoles(roles);
+        //根据userId查询user
+        User user = userMapper.getById(userId);
+        userVo.setUser(user);
+        return userVo;
+    }
+
+    @Override
+    public void updateUser(UserDto userDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userDto, user);
+        userMapper.updateWithNoPassWord(user);
+        List<Long> roleIds = userDto.getRoleIds();
+        roleMapper.deleteUserRoleById(user.getId());
+        for (Long roleId : roleIds) {
+            roleMapper.insertUserRole(user.getId(),roleId);
+        }
     }
 }

@@ -58,7 +58,7 @@
                      #{delFlag}
                  )
     </insert>
-    <insert id="insertUser" parameterType="com.blog.pojo.entity.User" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertUser" parameterType="com.blog.pojo.entity.User">
         INSERT INTO `sys_user` (
             id,
             user_name,
@@ -93,4 +93,25 @@
                      #{delFlag}
                  )
     </insert>
+    <update id="updateWithNoPassWord" parameterType="com.blog.pojo.entity.User">
+        UPDATE sys_user
+        SET
+        user_name = #{userName},
+        nick_name = #{nickName},
+        <if test="password != null and password != ''">
+            password = #{password},
+        </if>
+        type = #{type},
+        status = #{status},
+        email = #{email},
+        phonenumber = #{phonenumber},
+        sex = #{sex},
+        avatar = #{avatar},
+        create_by = #{createBy},
+        create_time = #{createTime},
+        update_by = #{updateBy},
+        update_time = #{updateTime},
+        del_flag = #{delFlag}
+        WHERE id = #{id}
+    </update>
 </mapper>

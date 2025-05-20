@@ -5,6 +5,7 @@ import com.blog.pojo.dto.UpdateUserInfoDto;
 import com.blog.pojo.dto.UserDto;
 import com.blog.pojo.entity.User;
 import com.blog.pojo.vo.UserInfoVo;
+import com.blog.pojo.vo.UserVo;
 import com.blog.result.PageBean;
 
 public interface UserService {
@@ -19,4 +20,8 @@ public interface UserService {
     void save(UserDto userDto);
 
     void delete(Long userId);
+
+    UserVo getUserDetailById(Long userId);
+
+    void updateUser(UserDto userDto);
 }
