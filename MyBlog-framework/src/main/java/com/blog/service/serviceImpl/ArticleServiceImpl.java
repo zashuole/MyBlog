@@ -51,6 +51,26 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public PageBean articleList(int pageNum, int pageSize, Long categoryId) {
+        if(categoryId == 0){
+            // 开启分页
+            PageHelper.startPage(pageNum, pageSize);
+            // 查询文章列表
+            Page<ArticleListVo> list = articleMapper.articleListWithNoKeyWordAndCategoryId();
+
+            // 从Redis缓存中获取访问量Map，假设key是字符串类型的文章id，value是访问量
+            Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
+
+            // 遍历查询结果，更新viewCount字段为缓存中的访问量
+            for (ArticleListVo article : list.getResult()) {
+                String articleIdStr = String.valueOf(article.getId());
+                if (cacheMap.containsKey(articleIdStr)) {
+                    article.setViewCount(cacheMap.get(articleIdStr).longValue());
+                }
+            }
+
+            // 封装并返回分页结果
+            return new PageBean(list.getTotal(), list.getResult());
+        }
         // 开启分页
         PageHelper.startPage(pageNum, pageSize);
         // 查询文章列表
@@ -149,5 +169,70 @@ public class ArticleServiceImpl implements ArticleService {
         articleMapper.deleteArticleById(id);
         //删博文对应标签
         articleTagMapper.deleteArticleMap(id);
+    }
+
+    @Override
+    public PageBean search(Integer pageNum, Integer pageSize, String keyword, Long categoryId) {
+        //无关键词有分类
+        if(keyword == null){
+            // 开启分页
+            PageHelper.startPage(pageNum, pageSize);
+            // 查询文章列表
+            Page<ArticleListVo> list = articleMapper.articleList(categoryId);
+
+            // 从Redis缓存中获取访问量Map，假设key是字符串类型的文章id，value是访问量
+            Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
+
+            // 遍历查询结果，更新viewCount字段为缓存中的访问量
+            for (ArticleListVo article : list.getResult()) {
+                String articleIdStr = String.valueOf(article.getId());
+                if (cacheMap.containsKey(articleIdStr)) {
+                    article.setViewCount(cacheMap.get(articleIdStr).longValue());
+                }
+            }
+
+            // 封装并返回分页结果
+            return new PageBean(list.getTotal(), list.getResult());
+        }else if(keyword !=null && categoryId == null){//有关键词没有分类
+            // 开启分页
+            PageHelper.startPage(pageNum, pageSize);
+            // 查询文章列表
+            Page<ArticleListVo> list = articleMapper.articleListWithKeyWordAndNoCategory(keyword);
+
+            // 从Redis缓存中获取访问量Map，假设key是字符串类型的文章id，value是访问量
+            Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
+
+            // 遍历查询结果，更新viewCount字段为缓存中的访问量
+            for (ArticleListVo article : list.getResult()) {
+                String articleIdStr = String.valueOf(article.getId());
+                if (cacheMap.containsKey(articleIdStr)) {
+                    article.setViewCount(cacheMap.get(articleIdStr).longValue());
+                }
+            }
+
+            // 封装并返回分页结果
+            return new PageBean(list.getTotal(), list.getResult());
+        }else if(keyword !=null && categoryId != null){//有关键词有分类
+            // 开启分页
+            PageHelper.startPage(pageNum, pageSize);
+            // 查询文章列表
+            Page<ArticleListVo> list = articleMapper.articleListWithKeyWordAndCategory(keyword,categoryId);
+
+            // 从Redis缓存中获取访问量Map，假设key是字符串类型的文章id，value是访问量
+            Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
+
+            // 遍历查询结果，更新viewCount字段为缓存中的访问量
+            for (ArticleListVo article : list.getResult()) {
+                String articleIdStr = String.valueOf(article.getId());
+                if (cacheMap.containsKey(articleIdStr)) {
+                    article.setViewCount(cacheMap.get(articleIdStr).longValue());
+                }
+            }
+
+            // 封装并返回分页结果
+            return new PageBean(list.getTotal(), list.getResult());
+
+        }
+        return null;
     }
 }

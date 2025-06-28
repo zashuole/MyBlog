@@ -48,4 +48,45 @@
             del_flag = #{delFlag}
         WHERE id = #{id}
     </update>
+    <select id="articleListWithNoKeyWordAndCategoryId" resultType="com.blog.pojo.vo.ArticleListVo">
+        SELECT a.id,
+               a.title,
+               a.summary,
+               a.thumbnail,
+               a.view_count,
+               a.create_time,
+               c.name AS categoryName
+        FROM article a
+                 LEFT JOIN category c ON a.category_id = c.id
+        ORDER BY a.view_count DESC
+    </select>
+    <select id="articleListWithKeyWordAndNoCategory" resultType="com.blog.pojo.vo.ArticleListVo">
+        SELECT
+            a.id,
+            a.title,
+            a.summary,
+            a.thumbnail,
+            a.view_count,
+            a.create_time,
+            c.name AS categoryName
+        FROM article a
+                 LEFT JOIN category c ON a.category_id = c.id
+        WHERE a.title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY a.view_count DESC
+    </select>
+    <select id="articleListWithKeyWordAndCategory" resultType="com.blog.pojo.vo.ArticleListVo">
+        SELECT
+            a.id,
+            a.title,
+            a.summary,
+            a.thumbnail,
+            a.view_count,
+            a.create_time,
+            c.name AS categoryName
+        FROM article a
+                 LEFT JOIN category c ON a.category_id = c.id
+        WHERE a.title LIKE CONCAT('%', #{keyword}, '%')
+          AND a.category_id = #{categoryId}
+        ORDER BY a.view_count DESC
+    </select>
 </mapper>

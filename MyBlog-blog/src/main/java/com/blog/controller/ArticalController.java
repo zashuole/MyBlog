@@ -40,4 +40,11 @@ public class ArticalController {
         articleService.updateViewCount(id);
         return Result.success();
     }
+    @GetMapping("search")
+    public Result<PageBean> search(@RequestParam(defaultValue = "1") Integer pageNum,
+                                        @RequestParam(defaultValue = "10") Integer pageSize,
+                                        @RequestParam(required = false) String keyword,
+                                        @RequestParam(required = false) Long categoryId){
+        return Result.success(articleService.search(pageNum,pageSize,keyword,categoryId));
+    }
 }

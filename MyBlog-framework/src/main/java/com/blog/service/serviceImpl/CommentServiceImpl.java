@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import com.blog.pojo.dto.CommentLikeDto;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
@@ -132,6 +133,38 @@ public class CommentServiceImpl implements CommentService {
             commentVoList.add(commentVo);
         }
         return new PageBean(commentList.getTotal(), commentVoList);
+    }
+
+    @Override
+    public Long like(Long commentId) {
+        Long likeCount = commentMapper.getLikeByCommentId(commentId);
+        likeCount ++;
+        String isLike = "1";
+        commentMapper.saveLikeByCommentId(commentId,likeCount,isLike);
+        return likeCount;
+    }
+
+    @Override
+    public CommentLikeDto getCommentById(Long commentId) {
+        CommentDto commentDto = commentMapper.getCommentById(commentId);
+        String isLike = commentDto.getIsLiked();
+        CommentLikeDto commentLikeDto = new CommentLikeDto();
+        commentLikeDto.setLikeCount(commentDto.getLikeCount());
+        if(isLike.equals("1")){
+            commentLikeDto.setIsLiked(true);
+        }else if(isLike.equals("0")) {
+            commentLikeDto.setIsLiked(false);
+        }
+        return commentLikeDto;
+    }
+
+    @Override
+    public Long unlike(Long commentId) {
+        Long likeCount = commentMapper.getLikeByCommentId(commentId);
+        likeCount --;
+        String isLike = "0";
+        commentMapper.saveLikeByCommentId(commentId,likeCount,isLike);
+        return likeCount;
     }
 
     private List<Comment> getAllChildenLinkCommentById(Long parentId) {

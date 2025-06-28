@@ -45,4 +45,11 @@ public interface ArticleMapper {
 
     @Delete("delete from article where id = #{id}")
     void deleteArticleById(Long id);
+
+    Page<ArticleListVo> articleListWithNoKeyWordAndCategoryId();
+
+    Page<ArticleListVo> articleListWithKeyWordAndNoCategory(String keyword);
+
+    Page<ArticleListVo> articleListWithKeyWordAndCategory( @Param("keyword") String keyword,
+                                                           @Param("categoryId") Long categoryId);
 }

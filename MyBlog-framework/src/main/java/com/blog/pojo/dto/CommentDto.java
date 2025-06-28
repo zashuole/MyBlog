@@ -28,4 +28,14 @@ public class CommentDto {
      回复目标评论id
      **/
     private Long toCommentId;
+    /**
+     是否点赞
+     **/
+    private String isLiked;
+
+    /**
+     点赞数
+     **/
+    private Long likeCount;
+
 }

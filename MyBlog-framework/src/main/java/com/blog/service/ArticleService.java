@@ -29,4 +29,6 @@ public interface ArticleService {
     void updateArtical(ArticleDto articalDto);
 
     void deleteArticleById(Long id);
+
+    PageBean search(Integer pageNum, Integer pageSize, String keyword, Long categoryId);
 }
