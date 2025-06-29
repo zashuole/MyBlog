@@ -37,6 +37,11 @@ public interface CommentMapper {
     void saveLikeByCommentId(@Param("commentId") Long commentId,
                              @Param("likeCount") Long likeCount,
                              @Param("isLike") String isLike); // '0' or '1'
-    @Select("select is_liked,like_count from comment where id = #{commentId}")
+    @Select("select * from comment where id = #{commentId}")
     CommentDto getCommentById(Long commentId);
+    @Select("select * from comment where id = #{commentId}")
+    Comment getCommentReplyById(Long toCommentId);
+
+    @Select("select * from comment where id = #{commentId}")
+    Comment getCommntById(Long commentId);
 }

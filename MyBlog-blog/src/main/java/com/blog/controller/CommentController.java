@@ -27,12 +27,12 @@ public class CommentController {
     public Result<PageBean> articleList(int pageNum, int pageSize, Long articleId){
         return Result.success(commentService.commentList(pageNum,pageSize,articleId));
     }
-    @PostMapping
-    @SystemLog(businessName = "增加评论")
-    public Result addComment(@RequestBody CommentDto commentDto){
-        commentService.addComment(commentDto);
-        return Result.success();
-    }
+//    @PostMapping
+//    @SystemLog(businessName = "增加评论")
+//    public Result addComment(@RequestBody CommentDto commentDto){
+//        commentService.addComment(commentDto);
+//        return Result.success();
+//    }
     @GetMapping("linkCommentList")
     @SystemLog(businessName = "获取全部友链评论")
     public Result<PageBean> linkCommentList(int pageNum, int pageSize, Long articleId){

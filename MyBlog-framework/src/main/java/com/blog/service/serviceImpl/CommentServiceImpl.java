@@ -9,6 +9,7 @@ import com.blog.pojo.dto.CommentDto;
 import com.blog.pojo.dto.CommentReportDto;
 import com.blog.pojo.entity.*;
 import com.blog.pojo.vo.CommentVo;
+import com.blog.pojo.vo.NotificationsVo;
 import com.blog.result.PageBean;
 import com.blog.result.Result;
 import com.blog.service.CommentService;
@@ -95,18 +96,18 @@ public class CommentServiceImpl implements CommentService {
         return result;
     }
 
-    @Override
-    public void addComment(CommentDto commentDto) {
-        Comment comment = new Comment();
-        BeanUtils.copyProperties(commentDto, comment);
-        //回复评论不会传递"to_comment_user_id"字段，需要处理"to_comment_user_id"字段
-        if(comment.getRootId()!=-1){
-            comment.setToCommentUserId(commentMapper.getUserIdByToCommentId(comment.getToCommentId()));
-        }
-        //其他字段采用公共字段填充
-        comment.setDelFlag(0);
-        commentMapper.addComment(comment);
-    }
+//    @Override
+//    public void addComment(CommentDto commentDto) {
+//        Comment comment = new Comment();
+//        BeanUtils.copyProperties(commentDto, comment);
+//        //回复评论不会传递"to_comment_user_id"字段，需要处理"to_comment_user_id"字段
+//        if(comment.getRootId()!=-1){
+//            comment.setToCommentUserId(commentMapper.getUserIdByToCommentId(comment.getToCommentId()));
+//        }
+//        //其他字段采用公共字段填充
+//        comment.setDelFlag(0);
+//        commentMapper.addComment(comment);
+//    }
 
     @Override
     public PageBean linkCommentList(int pageNum, int pageSize, Long articleId) {
@@ -153,6 +154,30 @@ public class CommentServiceImpl implements CommentService {
         likeCount ++;
         String isLike = "1";
         commentMapper.saveLikeByCommentId(commentId,likeCount,isLike);
+        //获取点赞的评论
+        Comment comment = commentMapper.getCommntById(commentId);
+        //自己不能给自己点赞
+        if(!SecurityUtils.getUserId().equals(comment.getCreateBy())){
+            CommentNotification isSuccess = commentNotificationMapper.getByCommentAndType(commentId,NotificationType.COMMENT_LIKE);
+            if(isSuccess != null){
+                commentNotificationMapper.likeByCommentAndType(commentId,NotificationType.COMMENT_LIKE);
+            }else {
+                User user = userMapper.getById(SecurityUtils.getUserId());
+                CommentNotification commentNotification = new CommentNotification();
+                commentNotification.setType(NotificationType.COMMENT_LIKE);
+                commentNotification.setTitle("评论新点赞通知");
+                commentNotification.setContent("用户"+user.getNickName()+"点赞了你的评论:"+comment.getContent());
+                commentNotification.setFromUserId(user.getId());
+                commentNotification.setToUserId(comment.getCreateBy());
+                commentNotification.setArticleId(comment.getArticleId());
+                commentNotification.setCommentId(commentId);
+                commentNotification.setIsRead(0);
+                commentNotification.setCreateTime(new Date());
+                commentNotification.setUpdateTime(new Date());
+                commentNotification.setDelFlag(0);
+                commentNotificationMapper.save(commentNotification);
+            }
+        }
         return likeCount;
     }
 
@@ -176,6 +201,8 @@ public class CommentServiceImpl implements CommentService {
         likeCount --;
         String isLike = "0";
         commentMapper.saveLikeByCommentId(commentId,likeCount,isLike);
+        //根据评论id找通知表并删除
+        commentNotificationMapper.deleteByCommentIdAndType(commentId,NotificationType.COMMENT_LIKE);
         return likeCount;
     }
 
@@ -184,6 +211,11 @@ public class CommentServiceImpl implements CommentService {
         // 1. 参数校验
         if (reportDto == null || reportDto.getCommentId() == null) {
             return Result.error("评论不存在");
+        }
+        //防止重复举报
+        boolean hasReported = commentReportMapper.existsByUserIdAndCommentId(SecurityUtils.getUserId(), reportDto.getCommentId());
+        if (hasReported) {
+            return Result.error("不能重复举报");
         }
         //创建commentReport对象
         CommentReport commentReport = new CommentReport();
@@ -197,6 +229,28 @@ public class CommentServiceImpl implements CommentService {
         commentReport.setDelFlag(0);
         commentReport.setCreateTime(new Date());
         commentReportMapper.save(commentReport);
+        //这里自己也可以举报自己的评论
+        User user = userMapper.getById(SecurityUtils.getUserId());
+        //将举报内容存入notification表中
+        CommentNotification commentNotification = new CommentNotification();
+        commentNotification.setType(NotificationType.COMMENT_REPORT);
+        commentNotification.setTitle("评论被举报通知");
+        //查询被举报文章
+        CommentDto comment = commentMapper.getCommentById(reportDto.getCommentId());
+        Article article = articleMapper.getArticleDetail(comment.getArticleId());
+        commentNotification.setContent(String.format("用户 %s 举报了你文章《%s》中的评论: %s，举报原因：%s",
+                user.getNickName(),
+                article.getTitle(),
+                comment.getContent(),
+                commentReport.getReason()));
+        commentNotification.setFromUserId(user.getId());
+        commentNotification.setToUserId(article.getCreateBy());
+        commentNotification.setArticleId(article.getId());
+        commentNotification.setIsRead(0);
+        commentNotification.setCreateTime(new Date());
+        commentNotification.setUpdateTime(new Date());
+        commentNotification.setDelFlag(0);
+        commentNotificationMapper.save(commentNotification);
         return Result.success("举报成功");
     }
 
@@ -204,27 +258,68 @@ public class CommentServiceImpl implements CommentService {
     public void sendComment(ArticleCommentDto articleCommentDto) {
         Comment comment = new Comment();
         BeanUtils.copyProperties(articleCommentDto, comment);
+        //回复评论不会传递"to_comment_user_id"字段，需要处理"to_comment_user_id"字段
+        if(comment.getRootId()!=-1){
+            comment.setToCommentUserId(commentMapper.getUserIdByToCommentId(comment.getToCommentId()));
+        }
+        //其他字段采用公共字段填充
         comment.setDelFlag(0);
-        comment.setArticleId(articleCommentDto.getAid());
+        comment.setArticleId(articleCommentDto.getArticleId());
         commentMapper.addComment(comment);
         User user = userMapper.getById(SecurityUtils.getUserId());
-        // 创建评论后,如果不是自己的文章
-        Article article = articleMapper.getCreateByarticleId(comment.getArticleId());
-        if(!user.getId().equals(article.getCreateBy())){
-            //将评论内容存入notification表中
-            CommentNotification commentNotification = new CommentNotification();
-            commentNotification.setType(NotificationType.ARTICLE_COMMENT);
-            commentNotification.setTitle("文章新评论通知");
-            commentNotification.setContent("用户"+user.getNickName()+"评论了你的"+article.getTitle()+"文章："+articleCommentDto.getContent());
-            commentNotification.setFromUserId(user.getId());
-            commentNotification.setToUserId(article.getCreateBy());
-            commentNotification.setArticleId(article.getId());
-            commentNotification.setIsRead(0);
-            commentNotification.setCreateTime(new Date());
-            commentNotification.setUpdateTime(new Date());
-            commentNotification.setDelFlag(0);
-            commentNotificationMapper.save(commentNotification);
+        //判断该评论是评论文章还是回复评论
+        if(articleCommentDto.getRootId()==-1&&articleCommentDto.getToCommentId()==-1){
+            //评论文章
+            // 创建评论后,如果不是自己的文章
+            Article article = articleMapper.getCreateByarticleId(comment.getArticleId());
+            if(!user.getId().equals(article.getCreateBy())){
+                //将评论内容存入notification表中
+                CommentNotification commentNotification = new CommentNotification();
+                commentNotification.setType(NotificationType.ARTICLE_COMMENT);
+                commentNotification.setTitle("文章新评论通知");
+                commentNotification.setContent(String.format("用户 %s 评论了你的文章《%s》：%s",
+                        user.getNickName(),
+                        article.getTitle(),
+                        articleCommentDto.getContent()));
+                commentNotification.setFromUserId(user.getId());
+                commentNotification.setToUserId(article.getCreateBy());
+                commentNotification.setArticleId(article.getId());
+                commentNotification.setCommentId(comment.getId());
+                commentNotification.setIsRead(0);
+                commentNotification.setCreateTime(new Date());
+                commentNotification.setUpdateTime(new Date());
+                commentNotification.setDelFlag(0);
+                commentNotificationMapper.save(commentNotification);
+            }
+        }else {
+            //回复评论
+            //获取被回复评论
+            Comment commentReply = commentMapper.getCommentReplyById(articleCommentDto.getToCommentId());
+            // 创建评论后,如果不是回复自己的评论
+            if(!user.getId().equals(commentReply.getCreateBy())){
+                //获取当前文章
+                Article article = articleMapper.getCreateByarticleId(comment.getArticleId());
+                //将评论内容存入notification表中
+                CommentNotification commentNotification = new CommentNotification();
+                commentNotification.setType(NotificationType.COMMENT_REPLY);
+                commentNotification.setTitle("用户回复通知");
+                //获取被回复的通知
+                commentNotification.setContent(String.format("用户 %s 回复了你的评论%s：%s",
+                        user.getNickName(),
+                        commentReply.getContent(),
+                        articleCommentDto.getContent()));
+                commentNotification.setToUserId(commentReply.getCreateBy());
+                commentNotification.setArticleId(article.getId());
+                commentNotification.setCommentId(comment.getId());
+                commentNotification.setReplyId(articleCommentDto.getToCommentId());
+                commentNotification.setIsRead(0);
+                commentNotification.setCreateTime(new Date());
+                commentNotification.setUpdateTime(new Date());
+                commentNotification.setDelFlag(0);
+                commentNotificationMapper.save(commentNotification);
+            }
         }
+
     }
 
     private List<Comment> getAllChildenLinkCommentById(Long parentId) {

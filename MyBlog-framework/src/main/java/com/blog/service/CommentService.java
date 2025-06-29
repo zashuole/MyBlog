@@ -10,7 +10,7 @@ import com.blog.result.Result;
 public interface CommentService {
     PageBean commentList(int pageNum, int pageSize, Long articleId);
 
-    void addComment(CommentDto commentDto);
+    //void addComment(CommentDto commentDto);
 
     PageBean linkCommentList(int pageNum, int pageSize, Long articleId);
 

@@ -11,7 +11,7 @@ public class ArticleCommentDto {
     /**
      文章id
      **/
-    private Long aid;
+    private Long articleId;
     /**
      根评论id
      **/

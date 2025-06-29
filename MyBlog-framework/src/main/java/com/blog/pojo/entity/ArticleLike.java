@@ -32,6 +32,9 @@ public class ArticleLike{
     点赞时间
     **/
     private Date createTime;
-
+    /**
+     * 该用户是否点赞
+     */
+    private int isLiked;
 }
 
