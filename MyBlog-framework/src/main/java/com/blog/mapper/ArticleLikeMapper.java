@@ -1,10 +1,7 @@
 package com.blog.mapper;
 
 import com.blog.pojo.entity.ArticleLike;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface ArticleLikeMapper {
@@ -15,6 +12,8 @@ public interface ArticleLikeMapper {
     @Insert("INSERT INTO article_like(article_id, user_id, create_time) " +
             "VALUES(#{articleId}, #{userId}, #{createTime})")
     void save(ArticleLike articleLike);
-    @Delete("DELETE FROM article_like WHERE article_id = #{articleId}")
-    void deleteByArticleId(Long articleId);
+
+    @Delete("DELETE FROM article_like WHERE article_id = #{articleId} AND user_id = #{userId}")
+    void deleteByArticleIdAndUserId(@Param("articleId") Long articleId,
+                                    @Param("userId") Long userId);
 }

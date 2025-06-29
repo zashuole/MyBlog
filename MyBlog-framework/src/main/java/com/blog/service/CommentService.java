@@ -1,5 +1,6 @@
 package com.blog.service;
 
+import com.blog.pojo.dto.ArticleCommentDto;
 import com.blog.pojo.dto.CommentDto;
 import com.blog.pojo.dto.CommentReportDto;
 import com.blog.result.PageBean;
@@ -20,4 +21,6 @@ public interface CommentService {
     Long unlike(Long commentId);
 
     Result reportComment(CommentReportDto reportDto);
+
+    void sendComment(ArticleCommentDto articleCommentDto);
 }

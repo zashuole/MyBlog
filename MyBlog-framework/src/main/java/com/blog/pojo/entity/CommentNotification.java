@@ -1,15 +1,17 @@
 package com.blog.pojo.entity;
 
 import java.util.Date;
+
+import com.blog.enums.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 评论通知表(CommentNotification)实体类
+ * 通知表(CommentNotification)实体类
  *
  * @author makejava
- * @since 2025-06-29 12:21:45
+ * @since 2025-06-29 14:07:57
  */
 
 @Data
@@ -19,9 +21,22 @@ public class CommentNotification{
 
     private Long id;
     /**
-    通知类型：reply-回复，like-点赞
+    通知类型：
+        ARTICLE_COMMENT-文章评论,
+        COMMENT_REPLY-回复评论,
+        COMMENT_LIKE-评论点赞,
+        ARTICLE_LIKE-文章点赞,
+        COMMENT_REPORT-评论举报
     **/
-    private String type;
+    private NotificationType type;
+    /**
+    通知标题
+    **/
+    private String title;
+    /**
+    通知内容
+    **/
+    private String content;
     /**
     触发通知的用户ID
     **/
@@ -39,9 +54,13 @@ public class CommentNotification{
     **/
     private Long commentId;
     /**
-    被回复的评论ID（回复类型时有值）
+    回复ID（评论回复时有值）
     **/
-    private Long parentCommentId;
+    private Long replyId;
+    /**
+    举报原因（举报类型时有值）
+    **/
+    private String reportReason;
     /**
     是否已读
     **/
@@ -54,6 +73,10 @@ public class CommentNotification{
     更新时间
     **/
     private Date updateTime;
+    /**
+    删除标志（0代表未删除，1代表已删除）
+    **/
+    private Integer delFlag;
 
 }
 

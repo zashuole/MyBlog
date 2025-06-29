@@ -1,14 +1,17 @@
 package com.blog.controller;
 
 import com.blog.annotation.SystemLog;
+import com.blog.pojo.dto.ArticleCommentDto;
 import com.blog.pojo.entity.Article;
 import com.blog.pojo.entity.ArticleLike;
+import com.blog.pojo.entity.Comment;
 import com.blog.pojo.vo.ArticleLikeVo;
 import com.blog.pojo.vo.HotArticleVo;
 import com.blog.result.PageBean;
 import com.blog.result.Result;
 import com.blog.service.ArticleLikeService;
 import com.blog.service.ArticleService;
+import com.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +24,8 @@ public class ArticalController {
     private ArticleService articleService;
     @Autowired
     private ArticleLikeService articleLikeService;
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping("/hotArticle")
     @SystemLog(businessName = "获取全部热点文章列表")
@@ -45,6 +50,12 @@ public class ArticalController {
         articleService.updateViewCount(id);
         return Result.success();
     }
+    @PostMapping("/sendComment")
+    public Result sendComment(@RequestBody ArticleCommentDto articleCommentDto){
+        commentService.sendComment(articleCommentDto);
+        return Result.success();
+    }
+
     @GetMapping("search")
     public Result<PageBean> search(@RequestParam(defaultValue = "1") Integer pageNum,
                                         @RequestParam(defaultValue = "10") Integer pageSize,

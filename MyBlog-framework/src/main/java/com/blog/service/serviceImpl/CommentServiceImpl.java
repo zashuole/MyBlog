@@ -1,11 +1,10 @@
 package com.blog.service.serviceImpl;
 
+import com.blog.enums.NotificationType;
 import com.blog.enums.ReportReasonEnum;
 import com.blog.exception.SystemException;
-import com.blog.mapper.ArticleMapper;
-import com.blog.mapper.CommentMapper;
-import com.blog.mapper.CommentReportMapper;
-import com.blog.mapper.UserMapper;
+import com.blog.mapper.*;
+import com.blog.pojo.dto.ArticleCommentDto;
 import com.blog.pojo.dto.CommentDto;
 import com.blog.pojo.dto.CommentReportDto;
 import com.blog.pojo.entity.*;
@@ -43,6 +42,8 @@ public class CommentServiceImpl implements CommentService {
     private CommentReportMapper commentReportMapper;
     @Autowired
     private ArticleMapper articleMapper;
+    @Autowired
+    private CommentNotificationMapper commentNotificationMapper;
 
     @Override
     public PageBean commentList(int pageNum, int pageSize, Long articleId) {
@@ -105,16 +106,6 @@ public class CommentServiceImpl implements CommentService {
         //其他字段采用公共字段填充
         comment.setDelFlag(0);
         commentMapper.addComment(comment);
-//        // 创建评论后,如果不是自己的文章
-//        Article article = articleMapper.getCreateByarticleId(comment.getArticleId());
-//        if(!SecurityUtils.getUserId().equals(article.getCreateBy())){
-//            //将评论内容存入notification表中
-//            CommentNotification commentNotification = new CommentNotification();
-//            commentNotification.setType("reply");
-//            commentNotification.setFromUserId(SecurityUtils.getUserId());
-//            commentNotification.setToUserId(article.getCreateBy());
-//            commentNotification.setArticleId(article.getId());
-//        }
     }
 
     @Override
@@ -207,6 +198,33 @@ public class CommentServiceImpl implements CommentService {
         commentReport.setCreateTime(new Date());
         commentReportMapper.save(commentReport);
         return Result.success("举报成功");
+    }
+
+    @Override
+    public void sendComment(ArticleCommentDto articleCommentDto) {
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(articleCommentDto, comment);
+        comment.setDelFlag(0);
+        comment.setArticleId(articleCommentDto.getAid());
+        commentMapper.addComment(comment);
+        User user = userMapper.getById(SecurityUtils.getUserId());
+        // 创建评论后,如果不是自己的文章
+        Article article = articleMapper.getCreateByarticleId(comment.getArticleId());
+        if(!user.getId().equals(article.getCreateBy())){
+            //将评论内容存入notification表中
+            CommentNotification commentNotification = new CommentNotification();
+            commentNotification.setType(NotificationType.ARTICLE_COMMENT);
+            commentNotification.setTitle("文章新评论通知");
+            commentNotification.setContent("用户"+user.getNickName()+"评论了你的"+article.getTitle()+"文章："+articleCommentDto.getContent());
+            commentNotification.setFromUserId(user.getId());
+            commentNotification.setToUserId(article.getCreateBy());
+            commentNotification.setArticleId(article.getId());
+            commentNotification.setIsRead(0);
+            commentNotification.setCreateTime(new Date());
+            commentNotification.setUpdateTime(new Date());
+            commentNotification.setDelFlag(0);
+            commentNotificationMapper.save(commentNotification);
+        }
     }
 
     private List<Comment> getAllChildenLinkCommentById(Long parentId) {
