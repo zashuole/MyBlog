@@ -1,18 +1,24 @@
 package com.blog.service.serviceImpl;
 
+import com.blog.enums.ReportReasonEnum;
+import com.blog.exception.SystemException;
+import com.blog.mapper.ArticleMapper;
 import com.blog.mapper.CommentMapper;
+import com.blog.mapper.CommentReportMapper;
 import com.blog.mapper.UserMapper;
 import com.blog.pojo.dto.CommentDto;
-import com.blog.pojo.entity.Comment;
-import com.blog.pojo.entity.LoginUser;
-import com.blog.pojo.entity.User;
+import com.blog.pojo.dto.CommentReportDto;
+import com.blog.pojo.entity.*;
 import com.blog.pojo.vo.CommentVo;
 import com.blog.result.PageBean;
+import com.blog.result.Result;
 import com.blog.service.CommentService;
+import com.blog.utils.RedisCache;
 import com.blog.utils.SecurityUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.blog.pojo.dto.CommentLikeDto;
 
 import javax.xml.crypto.Data;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +39,10 @@ public class CommentServiceImpl implements CommentService {
     private CommentMapper commentMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CommentReportMapper commentReportMapper;
+    @Autowired
+    private ArticleMapper articleMapper;
 
     @Override
     public PageBean commentList(int pageNum, int pageSize, Long articleId) {
@@ -94,6 +105,16 @@ public class CommentServiceImpl implements CommentService {
         //其他字段采用公共字段填充
         comment.setDelFlag(0);
         commentMapper.addComment(comment);
+//        // 创建评论后,如果不是自己的文章
+//        Article article = articleMapper.getCreateByarticleId(comment.getArticleId());
+//        if(!SecurityUtils.getUserId().equals(article.getCreateBy())){
+//            //将评论内容存入notification表中
+//            CommentNotification commentNotification = new CommentNotification();
+//            commentNotification.setType("reply");
+//            commentNotification.setFromUserId(SecurityUtils.getUserId());
+//            commentNotification.setToUserId(article.getCreateBy());
+//            commentNotification.setArticleId(article.getId());
+//        }
     }
 
     @Override
@@ -165,6 +186,27 @@ public class CommentServiceImpl implements CommentService {
         String isLike = "0";
         commentMapper.saveLikeByCommentId(commentId,likeCount,isLike);
         return likeCount;
+    }
+
+    @Override
+    public Result reportComment(CommentReportDto reportDto) {
+        // 1. 参数校验
+        if (reportDto == null || reportDto.getCommentId() == null) {
+            return Result.error("评论不存在");
+        }
+        //创建commentReport对象
+        CommentReport commentReport = new CommentReport();
+        commentReport.setReason(ReportReasonEnum.getDesc(reportDto.getReason()));
+        commentReport.setCommentId(reportDto.getCommentId());
+        commentReport.setDescription(reportDto.getDescription());
+        //获取当前登录用户
+        Long userId = SecurityUtils.getUserId();
+        commentReport.setUserId(userId);
+        commentReport.setStatus("0");
+        commentReport.setDelFlag(0);
+        commentReport.setCreateTime(new Date());
+        commentReportMapper.save(commentReport);
+        return Result.success("举报成功");
     }
 
     private List<Comment> getAllChildenLinkCommentById(Long parentId) {

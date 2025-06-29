@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageBean implements Serializable {
+public class PageBean<T> implements Serializable {
     private long total;//总记录数
     private List rows;//数据列表
 }

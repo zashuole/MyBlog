@@ -4,6 +4,8 @@ package com.blog.controller;
 import com.blog.annotation.SystemLog;
 import com.blog.pojo.dto.CommentDto;
 import com.blog.pojo.dto.CommentLikeDto;
+import com.blog.pojo.dto.CommentReportDto;
+import com.blog.pojo.vo.NotificationsVo;
 import com.blog.result.PageBean;
 import com.blog.result.Result;
 import com.blog.service.CommentService;
@@ -50,4 +52,13 @@ public class CommentController {
     public Result<CommentLikeDto> commentStatus(@PathVariable Long commentId){
         return Result.success(commentService.getCommentById(commentId));
     }
+    @PostMapping("/report")
+    @SystemLog(businessName = "举报评论")
+    public Result reportComment(@RequestBody CommentReportDto reportDto) {
+        return commentService.reportComment(reportDto);
+    }
+//    @GetMapping("/notifications")
+//    public Result<NotificationsVo> notifications(int pageNum, int pageSize,String type,Boolean isRead) {
+//
+//    }
 }

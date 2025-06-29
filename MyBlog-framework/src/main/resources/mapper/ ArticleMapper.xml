@@ -45,7 +45,8 @@
             is_comment = #{isComment},
             update_by = #{updateBy},
             update_time = #{updateTime},
-            del_flag = #{delFlag}
+            del_flag = #{delFlag},
+            like_count = #{likeCount}
         WHERE id = #{id}
     </update>
     <select id="articleListWithNoKeyWordAndCategoryId" resultType="com.blog.pojo.vo.ArticleListVo">

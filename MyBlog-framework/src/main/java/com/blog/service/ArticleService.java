@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface ArticleService {
 
-    List<HotArticleVo> hotArticleList();
+    List<HotArticleVo> hotArticleList(Long categoryId);
 
     PageBean articleList(int pageNum, int pageSize, Long categoryId);
 

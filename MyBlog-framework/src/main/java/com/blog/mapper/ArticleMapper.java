@@ -52,4 +52,9 @@ public interface ArticleMapper {
 
     Page<ArticleListVo> articleListWithKeyWordAndCategory( @Param("keyword") String keyword,
                                                            @Param("categoryId") Long categoryId);
+    @Select("select id,title,view_count from article where status = 0 and del_flag = 0 and category_id = #{categoryId} order by view_count desc ")
+    List<HotArticleVo> hotArticleListAndClass(Long categoryId);
+
+    @Select("select * from article where id = #{articleId}")
+    Article getCreateByarticleId(Long articleId);
 }

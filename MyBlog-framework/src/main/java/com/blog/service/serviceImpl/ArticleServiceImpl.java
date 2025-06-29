@@ -31,22 +31,41 @@ public class ArticleServiceImpl implements ArticleService {
     private RedisCache redisCache;
 
     @Override
-    public List<HotArticleVo> hotArticleList() {
-        // 从数据库查询基础热点文章列表（带有默认的viewCount）
-        List<HotArticleVo> list = articleMapper.hotArticleList();
+    public List<HotArticleVo> hotArticleList(Long categoryId) {
+        if(categoryId==null){
+            // 从数据库查询基础热点文章列表（带有默认的viewCount）
+            List<HotArticleVo> list = articleMapper.hotArticleList();
 
-        // 从Redis缓存中拿到最新的浏览量数据
-        Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
+            // 从Redis缓存中拿到最新的浏览量数据
+            Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
 
-        // 遍历热点文章列表，更新访问量为缓存中的最新数据（如果存在）
-        for (HotArticleVo vo : list) {
-            Integer cachedViewCount = cacheMap.get(String.valueOf(vo.getId()));
-            if (cachedViewCount != null) {
-                vo.setViewCount(cachedViewCount.longValue());
+            // 遍历热点文章列表，更新访问量为缓存中的最新数据（如果存在）
+            for (HotArticleVo vo : list) {
+                Integer cachedViewCount = cacheMap.get(String.valueOf(vo.getId()));
+                if (cachedViewCount != null) {
+                    vo.setViewCount(cachedViewCount.longValue());
+                }
             }
+            return list;
+        }else {
+            // 从数据库查询基础热点文章列表（带有默认的viewCount）
+            List<HotArticleVo> list = articleMapper.hotArticleListAndClass(categoryId);
+
+            // 从Redis缓存中拿到最新的浏览量数据
+            Map<String, Integer> cacheMap = redisCache.getCacheMap("article:viewCount");
+
+            // 遍历热点文章列表，更新访问量为缓存中的最新数据（如果存在）
+            for (HotArticleVo vo : list) {
+                Integer cachedViewCount = cacheMap.get(String.valueOf(vo.getId()));
+                if (cachedViewCount != null) {
+                    vo.setViewCount(cachedViewCount.longValue());
+                }
+            }
+            return list;
         }
 
-        return list;
+
+
     }
 
     @Override
