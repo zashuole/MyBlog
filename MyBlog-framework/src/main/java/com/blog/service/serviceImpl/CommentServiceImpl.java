@@ -244,7 +244,8 @@ public class CommentServiceImpl implements CommentService {
                 comment.getContent(),
                 commentReport.getReason()));
         commentNotification.setFromUserId(user.getId());
-        commentNotification.setToUserId(article.getCreateBy());
+        //举报评论交给管理员
+        commentNotification.setToUserId(1L);
         commentNotification.setArticleId(article.getId());
         commentNotification.setIsRead(0);
         commentNotification.setCreateTime(new Date());
@@ -314,6 +315,7 @@ public class CommentServiceImpl implements CommentService {
                 commentNotification.setReplyId(articleCommentDto.getToCommentId());
                 commentNotification.setIsRead(0);
                 commentNotification.setCreateTime(new Date());
+                commentNotification.setFromUserId(user.getId());
                 commentNotification.setUpdateTime(new Date());
                 commentNotification.setDelFlag(0);
                 commentNotificationMapper.save(commentNotification);

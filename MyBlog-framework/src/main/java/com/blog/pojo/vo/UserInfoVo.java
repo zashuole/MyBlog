@@ -25,5 +25,6 @@ public class UserInfoVo {
 
     private String email;
 
+    private String type;
 
 }

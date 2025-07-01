@@ -15,4 +15,7 @@ public interface CommentReportMapper {
     @Select("SELECT COUNT(1) > 0 FROM comment_report WHERE user_id = #{userId} AND comment_id = #{commentId} AND del_flag = 0")
     boolean existsByUserIdAndCommentId(@Param("userId") Long userId,
                                        @Param("commentId") Long commentId);
+
+    @Select("select * from comment_report where comment_id = #{commentId}")
+    CommentReport getReportByCommentId(Long commentId);
 }
