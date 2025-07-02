@@ -9,8 +9,8 @@ public interface ArticleLikeMapper {
     @Select("select * from article_like where article_id = #{articleId} and user_id = #{userId}")
     ArticleLike getLikeByArticleId(@Param("articleId") Long articleId,@Param("userId")Long userId);
 
-    @Insert("INSERT INTO article_like(article_id, user_id, create_time,is_liked) " +
-            "VALUES(#{articleId}, #{userId}, #{createTime},#{isLiked})")
+    @Insert("INSERT INTO article_like(article_id, user_id, create_time) " +
+            "VALUES(#{articleId}, #{userId}, #{createTime})")
     void save(ArticleLike articleLike);
 
     @Delete("DELETE FROM article_like WHERE article_id = #{articleId} AND user_id = #{userId}")

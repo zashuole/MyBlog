@@ -8,10 +8,7 @@ import com.blog.result.Result;
 import com.blog.service.NotificationService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/notification")
@@ -26,5 +23,25 @@ public class NotificationController {
     @GetMapping("/list")
     public Result<NotificationPageData> list(NotificationQueryRequest notificationQueryRequest) {
         return Result.success(notificationService.list(notificationQueryRequest));
+    }
+    @PutMapping("/read/{notificationId}")
+    public Result read(@PathVariable Long notificationId) {
+        notificationService.read(notificationId);
+        return Result.success();
+    }
+    @PutMapping("/read/batch")
+    public Result readBatch() {
+        notificationService.batch();
+        return Result.success();
+    }
+    @DeleteMapping("{notificationId}")
+    public Result delete(@PathVariable Long notificationId) {
+        notificationService.delete(notificationId);
+        return Result.success();
+    }
+    @DeleteMapping("/clear")
+    public Result clear() {
+        notificationService.clear();
+        return Result.success();
     }
 }

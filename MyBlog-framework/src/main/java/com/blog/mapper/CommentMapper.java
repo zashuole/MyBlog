@@ -44,4 +44,9 @@ public interface CommentMapper {
 
     @Select("select * from comment where id = #{commentId}")
     Comment getCommntById(Long commentId);
+
+    @Update("update comment set del_flag = 0 ,update_time = now() where id = #{commentId}")
+    void keepCommentByCommentId(Long commentId);
+    @Update("update comment set del_flag = 1 , update_time = now() where id = #{commentId}")
+    void deleteComment(Long commentId);
 }

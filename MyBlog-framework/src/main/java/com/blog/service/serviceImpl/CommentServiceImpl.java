@@ -324,6 +324,16 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    @Override
+    public void keepComment(Long commentId) {
+        commentMapper.keepCommentByCommentId(commentId);
+    }
+
+    @Override
+    public void deleteComment(Long commentId) {
+        commentMapper.deleteComment(commentId);
+    }
+
     private List<Comment> getAllChildenLinkCommentById(Long parentId) {
         List<Comment> result = new ArrayList<>();
         List<Comment> children = commentMapper.getChildenLinkCommentsById(parentId);

@@ -61,4 +61,15 @@ public class CommentController {
 //    public Result<NotificationsVo> notifications(int pageNum, int pageSize,String type,Boolean isRead) {
 //
 //    }
+    @PutMapping("/report/keep/{commentId}")
+    public Result keepComment(@PathVariable Long commentId) {
+        commentService.keepComment(commentId);
+        return Result.success();
+    }
+
+    @DeleteMapping("/report/delete/{commentId}")
+    public Result deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        return Result.success();
+    }
 }

@@ -23,4 +23,8 @@ public interface CommentService {
     Result reportComment(CommentReportDto reportDto);
 
     void sendComment(ArticleCommentDto articleCommentDto);
+
+    void keepComment(Long commentId);
+
+    void deleteComment(Long commentId);
 }

@@ -5,6 +5,8 @@ import com.blog.pojo.entity.FromUser;
 import com.blog.pojo.entity.NotificationSourceData;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class NotificationVo {
     private Long id;                         // 通知ID
@@ -14,5 +16,5 @@ public class NotificationVo {
     private Integer isRead;                    // 是否已读
     private NotificationSourceData sourceData; // 来源数据（动态结构）
     private FromUser fromUser;                 // 触发用户信息
-    private String createTime;                 // 创建时间
+    private Date createTime;                 // 创建时间
 }

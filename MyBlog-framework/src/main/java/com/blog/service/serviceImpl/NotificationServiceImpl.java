@@ -141,6 +141,7 @@ public class NotificationServiceImpl implements NotificationService {
                 fromUser.setUsername(user.getUserName());
                 fromUser.setAvatar(user.getAvatar());
                 notificationVo.setFromUser(fromUser);
+                notificationVo.setCreateTime(commentNotification.getCreateTime());
                 notificationVoList.add(notificationVo);
             }
             notificationPageData.setRows(notificationVoList);
@@ -214,11 +215,32 @@ public class NotificationServiceImpl implements NotificationService {
                 fromUser.setUsername(user.getUserName());
                 fromUser.setAvatar(user.getAvatar());
                 notificationVo.setFromUser(fromUser);
+                notificationVo.setCreateTime(commentNotification.getCreateTime());
                 notificationVoList.add(notificationVo);
             }
             notificationPageData.setRows(notificationVoList);
             notificationPageData.setTotal(notificationVoList.size());
             return notificationPageData;
         }
+    }
+
+    @Override
+    public void read(Long notificationId) {
+        notificationMapper.isReadByNotificationId(notificationId);
+    }
+
+    @Override
+    public void batch() {
+        notificationMapper.setAllIsRead(SecurityUtils.getUserId());
+    }
+
+    @Override
+    public void delete(Long notificationId) {
+        notificationMapper.delete(notificationId);
+    }
+
+    @Override
+    public void clear() {
+        notificationMapper.clear(SecurityUtils.getUserId());
     }
 }

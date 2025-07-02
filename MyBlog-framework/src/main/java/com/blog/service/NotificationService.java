@@ -8,4 +8,12 @@ public interface NotificationService {
     UnreadNotificationCountVo getUnreadCount();
 
     NotificationPageData list(NotificationQueryRequest notificationQueryRequest);
+
+    void read(Long notificationId);
+
+    void batch();
+
+    void delete(Long notificationId);
+
+    void clear();
 }
