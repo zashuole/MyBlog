@@ -70,5 +70,30 @@ public class Article{
      点赞数
      **/
     private Long likeCount;
+
+    /**
+     * 文章类型（1-纯文本，2-视频，3-音频，4-图文混合）
+     */
+    private Integer articleType;
+
+    /**
+     * 媒体文件URL
+     */
+    private String mediaUrl;
+
+    /**
+     * 媒体缩略图URL
+     */
+    private String mediaThumbnail;
+
+    /**
+     * 媒体时长（秒）
+     */
+    private Double mediaDuration;
+
+    /**
+     * 是否包含媒体文件（0-否，1-是）
+     */
+    private Integer hasMedia;
 }
 

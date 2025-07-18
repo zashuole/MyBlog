@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.mapper.ArticleMapper">
+
+    <select id="articleList" parameterType="long" resultType="com.blog.pojo.vo.ArticleListVo">
+        SELECT a.id,
+               a.title,
+               a.summary,
+               a.thumbnail,
+               a.view_count,
+               a.create_time,
+               c.name AS categoryName
+        FROM article a
+                 LEFT JOIN category c ON a.category_id = c.id
+        WHERE a.category_id = #{categoryId}
+        ORDER BY a.view_count DESC
+    </select>
+
+    <select id="getIdAndViewCount" resultType="map">
+        SELECT id, view_count
+        FROM article
+    </select>
+    <insert id="addArticle" parameterType="com.blog.pojo.entity.Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article (
+            title, content, summary, category_id, thumbnail, is_top, status,
+            view_count, is_comment, create_by, create_time, update_by, update_time, del_flag
+        ) VALUES (
+                     #{title}, #{content}, #{summary}, #{categoryId}, #{thumbnail}, #{isTop}, #{status},
+                     #{viewCount}, #{isComment}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{delFlag}
+                 )
+    </insert>
+    <update id="updateArticle" parameterType="com.blog.pojo.entity.Article">
+        UPDATE article
+        SET
+            title = #{title},
+            content = #{content},
+            summary = #{summary},
+            category_id = #{categoryId},
+            thumbnail = #{thumbnail},
+            is_top = #{isTop},
+            status = #{status},
+            is_comment = #{isComment},
+            update_by = #{updateBy},
+            update_time = #{updateTime},
+            del_flag = #{delFlag},
+            like_count = #{likeCount}
+        WHERE id = #{id}
+    </update>
+    <select id="articleListWithNoKeyWordAndCategoryId" resultType="com.blog.pojo.vo.ArticleListVo">
+        SELECT a.id,
+               a.title,
+               a.summary,
+               a.thumbnail,
+               a.view_count,
+               a.create_time,
+               c.name AS categoryName
+        FROM article a
+                 LEFT JOIN category c ON a.category_id = c.id
+        ORDER BY a.view_count DESC
+    </select>
+    <select id="articleListWithKeyWordAndNoCategory" resultType="com.blog.pojo.vo.ArticleListVo">
+        SELECT
+            a.id,
+            a.title,
+            a.summary,
+            a.thumbnail,
+            a.view_count,
+            a.create_time,
+            c.name AS categoryName
+        FROM article a
+                 LEFT JOIN category c ON a.category_id = c.id
+        WHERE a.title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY a.view_count DESC
+    </select>
+    <select id="articleListWithKeyWordAndCategory" resultType="com.blog.pojo.vo.ArticleListVo">
+        SELECT
+            a.id,
+            a.title,
+            a.summary,
+            a.thumbnail,
+            a.view_count,
+            a.create_time,
+            c.name AS categoryName
+        FROM article a
+                 LEFT JOIN category c ON a.category_id = c.id
+        WHERE a.title LIKE CONCAT('%', #{keyword}, '%')
+          AND a.category_id = #{categoryId}
+        ORDER BY a.view_count DESC
+    </select>
+</mapper>
