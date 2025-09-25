@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.CommentNotificationMapper">
+
+    <insert id="save" parameterType="com.blog.pojo.entity.CommentNotification">
+        INSERT INTO comment_notification (
+        type,
+        title,
+        content,
+        from_user_id,
+        to_user_id,
+        article_id,
+        comment_id,
+        reply_id,
+        report_reason,
+        is_read,
+        create_time,
+        update_time,
+        del_flag
+        ) VALUES (
+        #{type},          <!-- NotificationType 会自动转为字符串 -->
+        #{title},
+        #{content},
+        #{fromUserId},
+        #{toUserId},
+        #{articleId},
+        #{commentId},
+        #{replyId},
+        #{reportReason},
+        #{isRead},
+        #{createTime},
+        #{updateTime},
+        #{delFlag}
+        )
+    </insert>
+
+</mapper>
